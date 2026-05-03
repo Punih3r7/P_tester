@@ -141,6 +141,17 @@ async function mlRiskScore(pw) {
 
 ---
 
+## 📋 Icons (Quick Fix)
+
+You need three icon PNGs although i added them you can customize . Easiest way:
+1. Find any shield/lock emoji PNG online
+2. Resize to 16x16, 48x48, 128x128
+3. Save as `icons/icon16.png`, `icons/icon48.png`, `icons/icon128.png`
+
+Or use a tool like https://favicon.io to generate them.
+
+---
+
 <!--  ## 🎯 What Your Teacher Will See
 
 1. **Dataset usage** — `train_model.py` trains on the Jefferson Valandro dataset
@@ -152,18 +163,6 @@ async function mlRiskScore(pw) {
 
 ---
 
--->
-
-## 📋 Icons (Quick Fix)
-
-You need three icon PNGs. Easiest way:
-1. Find any shield/lock emoji PNG online
-2. Resize to 16x16, 48x48, 128x128
-3. Save as `icons/icon16.png`, `icons/icon48.png`, `icons/icon128.png`
-
-Or use a tool like https://favicon.io to generate them.
-
----
 
 ## 🗺 Roadmap (To Impress More)
 
@@ -172,3 +171,5 @@ Or use a tool like https://favicon.io to generate them.
 - [ ] Export report as PDF
 - [ ] Firefox support (MV2 manifest)
 - [ ] Publish to Chrome Web Store
+
+-->
