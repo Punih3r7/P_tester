@@ -141,7 +141,7 @@ async function mlRiskScore(pw) {
 
 ---
 
-## 🎯 What Your Teacher Will See
+<!--  ## 🎯 What Your Teacher Will See
 
 1. **Dataset usage** — `train_model.py` trains on the Jefferson Valandro dataset
 2. **Feature engineering** — 10 meaningful security features extracted
@@ -151,6 +151,8 @@ async function mlRiskScore(pw) {
 6. **Real-world API** — HIBP for threat intelligence layer
 
 ---
+
+-->
 
 ## 📋 Icons (Quick Fix)
 
