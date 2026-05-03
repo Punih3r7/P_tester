@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PasswordShield</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --border-bright: #2a2a40;
+      --text: #e8e8f0;
+      --text-dim: #6b6b8a;
+      --text-muted: #3a3a55;
+      --accent: #00d4ff;
+      --accent-dim: rgba(0, 212, 255, 0.1);
+      --accent-glow: rgba(0, 212, 255, 0.3);
+      --danger: #ff4560;
+      --warn: #ffb020;
+      --good: #00e676;
+      --great: #00d4ff;
+
+      --score-0: #ff4560;
+      --score-1: #ff6b35;
+      --score-2: #ffb020;
+      --score-3: #7ed321;
+      --score-4: #00e676;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 360px;
+      min-height: 480px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      overflow: hidden;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-icon {
+      width: 26px; height: 26px;
+      background: linear-gradient(135deg, var(--accent), #7b2fff);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+    .brand-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text);
+    }
+    .brand-name span { color: var(--accent); }
+    .version-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      background: var(--border);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── Input area ── */
+    .input-section {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .input-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .input-wrap {
+      position: relative;
+    }
+    .pw-input {
+      width: 100%;
+      padding: 10px 40px 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-bright);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .pw-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    .toggle-vis {
+      position: absolute;
+      right: 10px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      color: var(--text-dim); cursor: pointer;
+      font-size: 14px; line-height: 1;
+      transition: color 0.15s;
+    }
+    .toggle-vis:hover { color: var(--accent); }
+
+    /* ── Score ring ── */
+    .score-section {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ring-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .ring-svg { display: block; }
+    .ring-track {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 4;
+    }
+    .ring-fill {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 157;
+      stroke-dashoffset: 157;
+      transform: rotate(-90deg);
+      transform-origin: 32px 32px;
+      transition: stroke-dashoffset 0.6s cubic-bezier(.4,0,.2,1), stroke 0.4s;
+    }
+    .ring-label {
+      position: absolute;
+      inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .ring-score {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1;
+    }
+    .ring-max {
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    .score-meta { flex: 1; }
+    .score-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .score-subtitle {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+    .score-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+    .badge-pass { background: rgba(0,230,118,0.12); color: var(--good); border: 1px solid rgba(0,230,118,0.25); }
+    .badge-fail { background: rgba(255,69,96,0.12); color: var(--danger); border: 1px solid rgba(255,69,96,0.25); }
+    .badge-warn { background: rgba(255,176,32,0.12); color: var(--warn); border: 1px solid rgba(255,176,32,0.25); }
+
+    /* ── Breakdown bars ── */
+    .breakdown-section {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+    .check-icon {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px;
+      flex-shrink: 0;
+    }
+    .check-icon.pass { background: rgba(0,230,118,0.15); color: var(--good); }
+    .check-icon.fail { background: rgba(255,69,96,0.15); color: var(--danger); }
+    .check-icon.warn { background: rgba(255,176,32,0.15); color: var(--warn); }
+    .check-label { flex: 1; color: var(--text); font-size: 12px; }
+    .check-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* ── ML panel ── */
+    .ml-section {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ml-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .ml-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, rgba(0,212,255,0.15), rgba(123,47,255,0.15));
+      border: 1px solid rgba(0,212,255,0.2);
+      color: var(--accent);
+    }
+    .ml-gauge-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border-bright);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .ml-gauge-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .ml-gauge-text { font-size: 11px; color: var(--text-dim); }
+    .ml-gauge-pct {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text);
+    }
+    .ml-bar-bg {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .ml-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent), #7b2fff);
+      transition: width 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .ml-verdict {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .ml-verdict strong { color: var(--text); }
+
+    /* ── Tip ── */
+    .tip-section {
+      padding: 12px 16px;
+    }
+    .tip-box {
+      background: var(--surface);
+      border: 1px solid var(--border-bright);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 9px 11px;
+      font-size: 11px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .tip-box strong { color: var(--text); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── Empty state ── */
+    .empty-state {
+      padding: 28px 16px;
+      text-align: center;
+    }
+    .empty-icon { font-size: 32px; margin-bottom: 10px; }
+    .empty-text { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+    }
+    .footer-note {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .hibp-btn {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 10px;
+      background: none;
+      border: 1px solid var(--border-bright);
+      border-radius: 4px;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .hibp-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .hibp-result {
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .hibp-result.safe { color: var(--good); }
+    .hibp-result.breached { color: var(--danger); }
+    .hibp-result.checking { color: var(--text-muted); }
+
+    .hidden { display: none !important; }
+    .fade-in { animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Score level colors */
+    .lvl-0 { color: var(--score-0) !important; }
+    .lvl-1 { color: var(--score-1) !important; }
+    .lvl-2 { color: var(--score-2) !important; }
+    .lvl-3 { color: var(--score-3) !important; }
+    .lvl-4 { color: var(--score-4) !important; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-icon">🛡</div>
+    <div class="brand-name">Password<span>Shield</span></div>
+  </div>
+  <span class="version-tag">v1.0</span>
+</div>
+
+<div class="input-section">
+  <div class="input-label">Test a Password</div>
+  <div class="input-wrap">
+    <input class="pw-input" id="pwInput" type="password" placeholder="Enter password to analyze…" autocomplete="off" spellcheck="false"/>
+    <button class="toggle-vis" id="toggleVis" title="Show/hide">👁</button>
+  </div>
+</div>
+
+<!-- Empty state -->
+<div class="empty-state" id="emptyState">
+  <div class="empty-icon">🔐</div>
+  <div class="empty-text">Type a password above to get<br>a real-time security analysis.</div>
+</div>
+
+<!-- Results (hidden until input) -->
+<div id="results" class="hidden">
+
+  <div class="score-section">
+    <div class="ring-wrap">
+      <svg class="ring-svg" width="64" height="64" viewBox="0 0 64 64">
+        <circle class="ring-track" cx="32" cy="32" r="25"/>
+        <circle class="ring-fill" id="ringFill" cx="32" cy="32" r="25"/>
+      </svg>
+      <div class="ring-label">
+        <span class="ring-score" id="ringScore">0</span>
+        <span class="ring-max">/100</span>
+      </div>
+    </div>
+    <div class="score-meta">
+      <div class="score-title" id="scoreTitle">—</div>
+      <div class="score-subtitle" id="scoreSubtitle">—</div>
+      <div class="score-badges" id="scoreBadges"></div>
+    </div>
+  </div>
+
+  <div class="breakdown-section">
+    <div class="section-title">Rule Checks (Regex)</div>
+    <div id="checkRows"></div>
+  </div>
+
+  <div class="ml-section">
+    <div class="ml-header">
+      <div class="section-title" style="margin:0">ML Risk Assessment</div>
+      <span class="ml-badge">AI MODEL</span>
+    </div>
+    <div class="ml-gauge-wrap">
+      <div class="ml-gauge-label">
+        <span class="ml-gauge-text">Predictability Risk</span>
+        <span class="ml-gauge-pct" id="mlPct">—</span>
+      </div>
+      <div class="ml-bar-bg">
+        <div class="ml-bar-fill" id="mlBar"></div>
+      </div>
+      <div class="ml-verdict" id="mlVerdict">Waiting for model…</div>
+    </div>
+  </div>
+
+  <div class="tip-section">
+    <div class="tip-box" id="tipBox">
+      <strong>💡 Tip</strong><br>—
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-note">No data leaves your browser</span>
+  <div style="display:flex;align-items:center;gap:6px;">
+    <span class="hibp-result hidden" id="hibpResult"></span>
+    <button class="hibp-btn" id="hibpBtn">
+      <span>🔥</span> Check Breaches
+    </button>
+  </div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
