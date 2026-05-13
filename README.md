@@ -1,175 +1,198 @@
-# 🛡 PasswordShield — Browser Extension
+# 🛡 PasswordShield v2.0
+### Browser Extension — Password Analyzer + Regex Pattern Validator
 
-A cybersecurity browser extension combining **Regex rules** + **ML model** 
-trained on real breach data for real-time password strength analysis.
+A cybersecurity browser extension built for security students and professionals.  
+Combines **real-time password strength analysis** (Regex + ML) with a **full Regex Pattern Validator** that explains every pattern part by part.
 
 ---
 
-## 📁 Project Structure
+## 📸 What It Does
+
+### Tab 1 — Password Analyzer
+- Tests your password against 7 security rules using Regex
+- Gives an ML-based risk score (0–100%)
+- Shows an animated strength ring (Critically Weak → Very Strong)
+- Checks if your password appeared in real data breaches via **Have I Been Pwned API**
+- All analysis runs **locally in your browser** — your password never leaves your device
+
+### Tab 2 — Regex Validator
+- Validates 6 common patterns: **Email, Phone Number, Password, Username, Date, Time**
+- Shows the full regex for each pattern
+- Explains **every part of the regex** in plain English
+- Includes a **Custom Pattern Generator** — type a description and get a regex instantly
+- Built-in custom patterns: BD NID, IPv4, Hex Color, URL, Postal Code, Credit Card, MAC Address, Passport Number
+
+---
+
+## 🖥 Requirements
+
+- **Google Chrome** (version 88 or higher) — supports Manifest V3
+- OR **Microsoft Edge** (Chromium-based)
+- No internet required (except for the optional breach check)
+- No installation of Node.js, Python, or any server needed
+
+---
+
+## 📦 Installation
+
+### Step 1 — Download
+Download the ZIP file and extract it to a folder on your computer.  
+You should see these files inside:
+```
+password-shield-extension/
+├── manifest.json
+├── popup.html
+├── popup.js
+├── content.js
+├── background.js
+├── icons/
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+└── model/
+```
+
+### Step 2 — Open Chrome Extensions Page
+Open Google Chrome and go to:
+```
+chrome://extensions/
+```
+Or: Click the **three dots menu** → More Tools → Extensions
+
+### Step 3 — Enable Developer Mode
+In the top-right corner of the Extensions page, toggle **"Developer mode"** ON.  
+You will see three new buttons appear: Load unpacked, Pack extension, Update.
+
+### Step 4 — Load the Extension
+1. Click **"Load unpacked"**
+2. Navigate to and select the `password-shield-extension` folder you extracted
+3. Click **"Select Folder"**
+
+### Step 5 — Pin It (Recommended)
+1. Click the **puzzle piece icon** 🧩 in the Chrome toolbar
+2. Find **PasswordShield** in the list
+3. Click the **pin icon** 📌 to keep it visible in your toolbar
+
+✅ You should now see the shield icon in your browser toolbar. Click it to open the extension.
+
+---
+
+## 🚀 How to Use
+
+### Password Analyzer Tab
+1. Click the extension icon in your toolbar
+2. You are on the **🔐 Password Analyzer** tab by default
+3. Type any password in the input field
+4. Results update **instantly** as you type:
+   - Score ring shows strength out of 100
+   - Green ✓ / Red ✗ checks show which rules pass or fail
+   - ML bar shows how predictable your password is
+5. Click **"🔥 Check Breaches"** to check if the password was in a data breach
+   - Uses k-anonymity — only the first 5 characters of the SHA-1 hash are sent
+   - Your actual password is never transmitted
+
+### Regex Validator Tab
+1. Click the **🔎 Regex Validator** tab at the top
+2. Click any pattern chip: **Email, Phone, Password, Username, Date, Time**
+3. The regex and its full explanation appear immediately
+4. Click any **example chip** to auto-fill a test value
+5. Or type your own value — it validates in real time
+6. To generate a custom regex, scroll down to **Custom Pattern Generator**:
+   - Type a description like `BD NID` or `IPv4 address` or `hex color`
+   - Click **Generate ↗**
+   - See the regex, full explanation, and test it live
+
+### On Any Website
+The extension also works **automatically on any webpage** with a password field.  
+When you type in a password box on any login or signup form, a live badge appears:
+- 🔴 Critically Weak
+- 🟠 Weak
+- 🟡 Fair
+- 🟢 Strong
+- 🟢 Very Strong
+
+---
+
+## 🧪 Custom Pattern Generator — Supported Keywords
+
+Type any of these descriptions in the Custom Pattern Generator:
+
+| What you type | What you get |
+|---|---|
+| `BD NID` or `national id` | Bangladesh NID (10 or 13 digits) |
+| `IPv4` or `ip address` | IPv4 address like 192.168.1.1 |
+| `hex color` or `color code` | Hex color like #FF5733 or #F73 |
+| `URL` or `website` | Full URL with http/https |
+| `zip` or `postal` or `postcode` | Bangladesh 4-digit postal code |
+| `credit card` or `visa` | Visa / Mastercard / Amex format |
+| `MAC address` | MAC like 00:1A:2B:3C:4D:5E |
+| `passport` | Bangladesh passport number |
+
+---
+
+## 🔒 Privacy
+
+- ✅ No data is collected or stored remotely
+- ✅ Passwords are never sent anywhere
+- ✅ The breach check uses **k-anonymity** (only a partial SHA-1 hash prefix is sent to Have I Been Pwned)
+- ✅ All regex and ML analysis runs entirely in your browser
+- ✅ No account, login, or signup required
+
+## 🗂 File Structure
 
 ```
 password-shield-extension/
-├── manifest.json        ← Extension config (Chrome MV3)
-├── popup.html           ← What users see when clicking the icon
-├── popup.js             ← All UI logic: regex checks + ML heuristic
-├── content.js           ← Scans web pages for password fields
-├── background.js        ← Service worker (future: TF.js model here)
-├── train_model.py       ← Python training script for Kaggle dataset
-├── model/               ← (You generate this) TF.js model files
-│   ├── model.json
-│   └── weights.bin
-└── icons/               ← (Add your own) 16x16, 48x48, 128x128 PNGs
+│
+├── manifest.json       ← Extension config (Chrome Manifest V3)
+├── popup.html          ← UI layout for both tabs
+├── popup.js            ← All logic: password analysis + regex validator
+├── content.js          ← Scans web pages for password fields
+├── background.js       ← Service worker (ML model loader)
+├── icons/
+   ├── icon16.png      ← Toolbar icon (16×16)
+   ├── icon48.png      ← Extensions page icon (48×48)
+   └── icon128.png     ← Chrome Web Store icon (128×128)
+
+
 ```
 
 ---
 
-## 🚀 Step 1 — Load Extension in Chrome (Do This First)
+## 🛠 Troubleshooting
 
-1. Open Chrome → go to `chrome://extensions/`
-2. Turn ON **Developer mode** (top-right toggle)
-3. Click **"Load unpacked"**
-4. Select this entire `password-shield-extension/` folder
-5. You should see the shield icon in your toolbar ✅
+**"Could not load manifest" error**
+→ Make sure you selected the folder that *contains* `manifest.json`, not a parent folder.
 
-> The extension works immediately with Regex + ML heuristic, **before** you add the trained model.
+**Extension icon not showing**
+→ Click the 🧩 puzzle icon in Chrome toolbar and pin PasswordShield.
 
----
+**Breach check not working**
+→ You need an internet connection for the Have I Been Pwned API call.
 
-## 🐍 Step 2 — Train the Model (Python)
+**Extension not updating after changes**
+→ Go to `chrome://extensions/` and click the 🔄 reload button under PasswordShield.
 
-### Download the Dataset
-1. Go to: https://www.kaggle.com/datasets/jeffersonvalandro/password-dataset
-2. Download the CSV file
-3. Rename it to `passwords.csv`
-4. Place it in this folder
-
-### Install Dependencies
-```bash
-pip install pandas scikit-learn tensorflow tensorflowjs numpy
-```
-
-### Run Training
-```bash
-python train_model.py
-```
-
-This will:
-- Clean and preprocess the password data
-- Extract 10 security features per password
-- Train a small neural network (3 layers)
-- Export `model/model.json` + `model/weights.bin`
-- Print scaler parameters you'll need in step 3
-
-### Expected Output
-```
-Test accuracy: 0.91
-              precision    recall  f1-score
-Weak              0.92      0.89      0.90
-Medium            0.87      0.91      0.89
-Strong            0.94      0.93      0.93
-```
+**"Developer mode extensions" warning on startup**
+→ This is normal for unpacked extensions. Click "Keep" or "Cancel" to dismiss it.
 
 ---
 
-## 🔌 Step 3 — Wire ML Model into Extension
+## 👨‍💻 Built With
 
-After training, open `popup.js` and find the `mlRiskScore()` function.
-
-**Replace it with TF.js inference:**
-
-```javascript
-// Add to the top of popup.js:
-import * as tf from './lib/tensorflow.min.js';
-
-let model = null;
-
-// These come from train_model.py output:
-const SCALER_MEAN  = [/* paste values from training output */];
-const SCALER_SCALE = [/* paste values from training output */];
-
-async function loadModel() {
-  model = await tf.loadLayersModel(chrome.runtime.getURL('model/model.json'));
-}
-loadModel();
-
-function extractFeatures(pw) {
-  // Same 10 features as train_model.py
-  const length      = pw.length;
-  const hasUpper    = /[A-Z]/.test(pw) ? 1 : 0;
-  const hasLower    = /[a-z]/.test(pw) ? 1 : 0;
-  const hasDigit    = /[0-9]/.test(pw) ? 1 : 0;
-  const hasSpecial  = /[^a-zA-Z0-9]/.test(pw) ? 1 : 0;
-  const hasRepeat   = /(.)\1{2,}/.test(pw) ? 1 : 0;
-  const hasSeq      = /(123|abc|qwerty)/i.test(pw) ? 1 : 0;
-  const uniqueChars = new Set(pw).size;
-  const charVariety = uniqueChars / Math.max(length, 1);
-  const charset     = (hasLower*26) + (hasUpper*26) + (hasDigit*10) + (hasSpecial*32);
-  const entropy     = length * Math.log2(Math.max(charset, 1));
-
-  return [length, hasUpper, hasLower, hasDigit, hasSpecial,
-          hasRepeat, hasSeq, uniqueChars, charVariety, entropy];
-}
-
-async function mlRiskScore(pw) {
-  if (!model) return 50; // fallback
-  const raw = extractFeatures(pw);
-  // Normalize using scaler params from training
-  const normalized = raw.map((v, i) => (v - SCALER_MEAN[i]) / SCALER_SCALE[i]);
-  const tensor = tf.tensor2d([normalized]);
-  const pred = model.predict(tensor);
-  const probs = await pred.data();
-  // probs[0]=Weak, probs[1]=Medium, probs[2]=Strong
-  const risk = Math.round(probs[0] * 100); // probability of being "Weak" = risk
-  tensor.dispose();
-  pred.dispose();
-  return risk;
-}
-```
+- **HTML / CSS / JavaScript** — Extension UI and logic
+- **Regex** — Phase 1 pattern validation
+- **ML heuristic / Random Forest** — Phase 2 risk scoring
+- **Have I Been Pwned API** — Breach intelligence (k-anonymity)
+- **Web Crypto API** — SHA-1 hashing in-browser
+- **Chrome Extensions Manifest V3** — Extension platform
 
 ---
 
-## 🔥 Features
+## ⚠️ Disclaimer
 
-| Feature | How |
-|---|---|
-| Real-time analysis | Regex on every keystroke |
-| 7 security rules | Length, upper, lower, digit, special, no-repeat, no-sequence |
-| ML risk score | Heuristic (upgrade to trained model) |
-| Breach check | Have I Been Pwned API (k-anonymity — password never leaves your browser) |
-| Page scanning | Detects password fields on any website and shows inline badge |
-| Zero telemetry | Everything runs locally |
+This tool is built for **educational purposes** as part of a cybersecurity course project.  
+Only test passwords on systems and accounts you own or have permission to test.
 
 ---
 
-## 📋 Icons (Quick Fix)
-
-You need three icon PNGs although i added them you can customize . Easiest way:
-1. Find any shield/lock emoji PNG online
-2. Resize to 16x16, 48x48, 128x128
-3. Save as `icons/icon16.png`, `icons/icon48.png`, `icons/icon128.png`
-
-Or use a tool like https://favicon.io to generate them.
-
----
-
-<!--  ## 🎯 What Your Teacher Will See
-
-1. **Dataset usage** — `train_model.py` trains on the Jefferson Valandro dataset
-2. **Feature engineering** — 10 meaningful security features extracted
-3. **ML pipeline** — sklearn preprocessing + Keras neural network
-4. **Browser integration** — TF.js model runs in-browser (no server)
-5. **Hybrid approach** — Regex for instant feedback, ML for deep assessment
-6. **Real-world API** — HIBP for threat intelligence layer
-
----
-
-
-## 🗺 Roadmap (To Impress More)
-
-- [ ] Add zxcvbn library for crack-time estimation
-- [ ] Password generator button
-- [ ] Export report as PDF
-- [ ] Firefox support (MV2 manifest)
-- [ ] Publish to Chrome Web Store
-
--->
+*Built as a Practical Lab project — 6th Semester, Cybersecurity*
