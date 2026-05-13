@@ -1,121 +1,67 @@
-// ─────────────────────────────────────────────
-//  PasswordShield — content.js
-//  Scans the active page for password fields
-//  and injects a strength indicator badge.
-// ─────────────────────────────────────────────
-
-(function () {
+// PasswordShield v2.0 — content.js
+// Injects a live strength badge on password fields in any webpage
+(function(){
   'use strict';
+  if (window.__psActive) return;
+  window.__psActive = true;
 
-  // Avoid injecting twice
-  if (window.__passwordShieldActive) return;
-  window.__passwordShieldActive = true;
-
-  const STYLE = `
-    .ps-indicator {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 11px;
-      font-weight: 700;
-      font-family: monospace;
-      padding: 2px 7px;
-      border-radius: 4px;
-      pointer-events: none;
-      z-index: 999999;
-      letter-spacing: 0.05em;
-      white-space: nowrap;
-      transition: background 0.2s, color 0.2s;
+  const css = `
+    .ps-badge {
+      position:absolute;right:8px;top:50%;transform:translateY(-50%);
+      font-size:11px;font-weight:700;font-family:monospace;
+      padding:2px 7px;border-radius:4px;pointer-events:none;
+      z-index:999999;white-space:nowrap;transition:background .2s,color .2s;
     }
-    .ps-wrap { position: relative; display: inline-block; }
-    .ps-score-0 { background: #ff4560; color: #fff; }
-    .ps-score-1 { background: #ff6b35; color: #fff; }
-    .ps-score-2 { background: #ffb020; color: #000; }
-    .ps-score-3 { background: #7ed321; color: #000; }
-    .ps-score-4 { background: #00e676; color: #000; }
+    .ps-0{background:#ff4560;color:#fff} .ps-1{background:#ff6b35;color:#fff}
+    .ps-2{background:#ffb020;color:#000} .ps-3{background:#7ed321;color:#000}
+    .ps-4{background:#00e676;color:#000}
   `;
+  const s = document.createElement('style');
+  s.textContent = css;
+  document.head.appendChild(s);
 
-  // Inject styles
-  const styleEl = document.createElement('style');
-  styleEl.textContent = STYLE;
-  document.head.appendChild(styleEl);
-
-  function getLevel(score) {
-    if (score < 20) return 0;
-    if (score < 40) return 1;
-    if (score < 60) return 2;
-    if (score < 80) return 3;
-    return 4;
-  }
-
-  const LABELS = ['Critically Weak', 'Weak', 'Fair', 'Strong', 'Very Strong'];
-
-  function quickScore(pw) {
+  const LABELS = ['Critically Weak','Weak','Fair','Strong','Very Strong'];
+  function score(pw) {
     if (!pw) return 0;
-    let score = 0;
-    if (pw.length >= 10) score += 20;
-    if (pw.length >= 16) score += 10;
-    if (/[A-Z]/.test(pw)) score += 15;
-    if (/[a-z]/.test(pw)) score += 10;
-    if (/[0-9]/.test(pw)) score += 15;
-    if (/[^a-zA-Z0-9]/.test(pw)) score += 20;
-    if (!/(.)\1{2,}/.test(pw)) score += 5;
-    if (!(/(123|abc|qwerty)/i.test(pw))) score += 5;
-    return Math.min(100, score);
+    let s = 0;
+    if (pw.length >= 10) s += 20;
+    if (pw.length >= 16) s += 10;
+    if (/[A-Z]/.test(pw)) s += 15;
+    if (/[a-z]/.test(pw)) s += 10;
+    if (/[0-9]/.test(pw)) s += 15;
+    if (/[^a-zA-Z0-9]/.test(pw)) s += 20;
+    if (!/(.)\1{2,}/.test(pw)) s += 5;
+    if (!/(123|abc|qwerty)/i.test(pw)) s += 5;
+    return Math.min(100, s);
   }
+  function lvl(s){ return s<20?0:s<40?1:s<60?2:s<80?3:4; }
 
-  function attachIndicator(input) {
-    // Don't double-attach
-    if (input.dataset.psAttached) return;
-    input.dataset.psAttached = '1';
-
-    const indicator = document.createElement('div');
-    indicator.className = 'ps-indicator';
-    indicator.style.display = 'none';
-
-    // Wrap the input if not already positioned
-    const parent = input.parentElement;
-    const originalStyle = getComputedStyle(parent).position;
-
-    if (originalStyle === 'static') {
-      parent.style.position = 'relative';
-    }
-
-    parent.appendChild(indicator);
-
-    input.addEventListener('input', () => {
-      const pw = input.value;
-      if (!pw) {
-        indicator.style.display = 'none';
-        return;
-      }
-
-      const score = quickScore(pw);
-      const lvl = getLevel(score);
-      indicator.className = `ps-indicator ps-score-${lvl}`;
-      indicator.textContent = LABELS[lvl];
-      indicator.style.display = 'block';
-
-      // Pad input so text doesn't hide behind badge
-      input.style.paddingRight = '120px';
+  function attach(inp) {
+    if (inp.dataset.psOk) return;
+    inp.dataset.psOk = '1';
+    const badge = document.createElement('div');
+    badge.className = 'ps-badge';
+    badge.style.display = 'none';
+    const par = inp.parentElement;
+    if (getComputedStyle(par).position === 'static') par.style.position = 'relative';
+    par.appendChild(badge);
+    inp.addEventListener('input', () => {
+      const pw = inp.value;
+      if (!pw) { badge.style.display = 'none'; inp.style.paddingRight = ''; return; }
+      const l = lvl(score(pw));
+      badge.className = 'ps-badge ps-' + l;
+      badge.textContent = LABELS[l];
+      badge.style.display = 'block';
+      inp.style.paddingRight = '120px';
     });
   }
 
-  // Attach to all existing password fields
-  document.querySelectorAll('input[type="password"]').forEach(attachIndicator);
-
-  // Watch for dynamically added fields (SPAs, etc.)
-  const observer = new MutationObserver(mutations => {
-    for (const m of mutations) {
-      for (const node of m.addedNodes) {
-        if (node.nodeType !== 1) continue;
-        if (node.matches('input[type="password"]')) attachIndicator(node);
-        node.querySelectorAll?.('input[type="password"]').forEach(attachIndicator);
-      }
+  document.querySelectorAll('input[type=password]').forEach(attach);
+  new MutationObserver(muts => {
+    for (const m of muts) for (const n of m.addedNodes) {
+      if (n.nodeType!==1) continue;
+      if (n.matches('input[type=password]')) attach(n);
+      n.querySelectorAll?.('input[type=password]').forEach(attach);
     }
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
-
+  }).observe(document.body, {childList:true, subtree:true});
 })();
