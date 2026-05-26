@@ -14,10 +14,9 @@
       --s0:#ff4560;--s1:#ff6b35;--s2:#ffb020;--s3:#7ed321;--s4:#00e676;
     }
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{width:420px;min-height:540px;background:var(--bg);color:var(--text);
+    body{width:420px;min-height:480px;background:var(--bg);color:var(--text);
       font-family:'Space Grotesk',sans-serif;font-size:13px;overflow-x:hidden;}
 
-    /* TOPBAR */
     .topbar{display:flex;align-items:center;justify-content:space-between;
       padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);}
     .brand{display:flex;align-items:center;gap:8px;}
@@ -28,7 +27,6 @@
     .vtag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);
       background:var(--border);padding:2px 6px;border-radius:3px;}
 
-    /* NAV */
     .nav{display:flex;border-bottom:1px solid var(--border);background:var(--surface);}
     .ntab{flex:1;padding:9px 4px;text-align:center;font-size:11px;font-weight:600;
       letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;
@@ -38,7 +36,7 @@
 
     .panel{display:none;}.panel.active{display:block;}
 
-    /* ── TAB 1: PASSWORD ── */
+    /* TAB 1 — PASSWORD */
     .inp-sec{padding:14px 16px;border-bottom:1px solid var(--border);}
     .lbl{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
       color:var(--text-dim);margin-bottom:7px;}
@@ -83,20 +81,6 @@
     .chk-lbl{flex:1;color:var(--text);font-size:12px;}
     .chk-val{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);}
 
-    .ml-sec{padding:12px 16px;border-bottom:1px solid var(--border);}
-    .ml-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
-    .ml-bdg{font-size:9px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:3px;
-      background:linear-gradient(90deg,rgba(0,212,255,.15),rgba(123,47,255,.15));
-      border:1px solid rgba(0,212,255,.2);color:var(--accent);}
-    .ml-gauge{background:var(--surface);border:1px solid var(--border-bright);border-radius:6px;padding:9px 12px;}
-    .ml-glbl{display:flex;justify-content:space-between;margin-bottom:6px;}
-    .ml-gtxt{font-size:11px;color:var(--text-dim);}
-    .ml-gpct{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);}
-    .ml-gbg{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
-    .ml-gfill{height:100%;width:0%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#7b2fff);transition:width .7s cubic-bezier(.4,0,.2,1);}
-    .ml-verd{margin-top:7px;font-size:11px;color:var(--text-dim);line-height:1.5;}
-    .ml-verd strong{color:var(--text);}
-
     .tip-sec{padding:10px 16px;}
     .tip-box{background:var(--surface);border:1px solid var(--border-bright);
       border-left:3px solid var(--accent);border-radius:0 6px 6px 0;
@@ -114,9 +98,8 @@
     .hibp-res.safe{color:var(--good);}.hibp-res.breached{color:var(--danger);}
     .hibp-res.checking{color:var(--text-muted);}
 
-    /* ── TAB 2: REGEX VALIDATOR ── */
+    /* TAB 2 — REGEX VALIDATOR */
     .rx-wrap{padding:14px 16px 16px;}
-
     .rx-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
     .rx-chip{display:flex;align-items:center;gap:5px;padding:5px 11px;
       border:1px solid var(--border-bright);border-radius:20px;cursor:pointer;
@@ -140,11 +123,11 @@
       transition:border-color .2s,box-shadow .2s;margin-bottom:10px;}
     .rx-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
 
-    .rx-card{border:1px solid var(--border-bright);border-radius:8px;overflow:hidden;margin-bottom:12px;}
+    .rx-card{border:1px solid var(--border-bright);border-radius:8px;overflow:hidden;}
     .rx-card-hdr{display:flex;align-items:center;gap:8px;padding:8px 12px;
       background:var(--surface);border-bottom:1px solid var(--border);}
     .rx-status-dot{width:9px;height:9px;border-radius:50%;background:var(--border-bright);}
-    .rx-status-dot.p{background:var(--good);} .rx-status-dot.f{background:var(--danger);}
+    .rx-status-dot.p{background:var(--good);}.rx-status-dot.f{background:var(--danger);}
     .rx-verdict{font-size:12px;font-weight:600;color:var(--text-dim);}
     .rx-verdict.p{color:var(--good);}.rx-verdict.f{color:var(--danger);}
     .rx-body{padding:10px 12px;}
@@ -160,30 +143,7 @@
       white-space:nowrap;flex-shrink:0;border:1px solid rgba(0,212,255,.15);}
     .rx-desc{color:var(--text-dim);line-height:1.5;}
 
-    .rx-divider{height:1px;background:var(--border);margin:12px 0;}
-    .rx-cust-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-      color:var(--text-dim);margin-bottom:7px;}
-    .rx-cust-row{display:flex;gap:7px;margin-bottom:8px;}
-    .rx-cust-inp{flex:1;padding:8px 10px;background:var(--surface);
-      border:1px solid var(--border-bright);border-radius:6px;color:var(--text);
-      font-size:12px;outline:none;transition:border-color .2s;}
-    .rx-cust-inp:focus{border-color:var(--accent);}
-    .rx-gen-btn{padding:8px 12px;background:linear-gradient(135deg,var(--accent),#7b2fff);
-      border:none;border-radius:6px;color:#000;font-weight:700;font-size:11px;
-      cursor:pointer;white-space:nowrap;transition:opacity .15s;}
-    .rx-gen-btn:hover{opacity:.85;}
-    .rx-cust-out{background:var(--surface);border:1px solid var(--border-bright);
-      border-radius:8px;padding:10px 12px;font-size:11px;color:var(--text-dim);line-height:1.7;}
-    .rx-cust-test-inp{width:100%;margin-top:8px;padding:7px 10px;background:var(--bg);
-      border:1px solid var(--border-bright);border-radius:5px;color:var(--text);
-      font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;}
-    .rx-cust-test-inp:focus{border-color:var(--accent);}
-    .rx-cust-res{font-size:11px;font-weight:600;margin-top:5px;}
-    .rx-cust-res.p{color:var(--good);}.rx-cust-res.f{color:var(--danger);}
-
     .hidden{display:none!important;}
-    .fade-in{animation:fi .2s ease;}
-    @keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
     .l0{color:var(--s0)!important}.l1{color:var(--s1)!important}
     .l2{color:var(--s2)!important}.l3{color:var(--s3)!important}.l4{color:var(--s4)!important}
   </style>
@@ -203,7 +163,7 @@
   <div class="ntab" data-tab="regex">🔎 Regex Validator</div>
 </div>
 
-<!-- ═══ TAB 1: PASSWORD ANALYZER ═══ -->
+<!-- TAB 1: PASSWORD ANALYZER -->
 <div class="panel active" id="tab-password">
   <div class="inp-sec">
     <div class="lbl">Test a Password</div>
@@ -239,23 +199,8 @@
     </div>
 
     <div class="brkdn">
-      <div class="sec-ttl">Rule Checks (Regex Phase)</div>
+      <div class="sec-ttl">Regex Rule Checks</div>
       <div id="chkRows"></div>
-    </div>
-
-    <div class="ml-sec">
-      <div class="ml-hdr">
-        <div class="sec-ttl" style="margin:0">ML Risk Assessment</div>
-        <span class="ml-bdg">AI MODEL</span>
-      </div>
-      <div class="ml-gauge">
-        <div class="ml-glbl">
-          <span class="ml-gtxt">Predictability Risk</span>
-          <span class="ml-gpct" id="mlPct">—</span>
-        </div>
-        <div class="ml-gbg"><div class="ml-gfill" id="mlBar"></div></div>
-        <div class="ml-verd" id="mlVerd">—</div>
-      </div>
     </div>
 
     <div class="tip-sec">
@@ -272,7 +217,7 @@
   </div>
 </div>
 
-<!-- ═══ TAB 2: REGEX VALIDATOR ═══ -->
+<!-- TAB 2: REGEX VALIDATOR -->
 <div class="panel" id="tab-regex">
 <div class="rx-wrap">
 
@@ -292,7 +237,7 @@
   <div class="lbl" style="margin-bottom:6px">Test value</div>
   <input class="rx-inp" id="rxInput" placeholder="Type or click an example above…" autocomplete="off" spellcheck="false"/>
 
-  <div class="rx-card" id="rxCard">
+  <div class="rx-card">
     <div class="rx-card-hdr">
       <div class="rx-status-dot" id="rxDot"></div>
       <span class="rx-verdict" id="rxVerdict">Select a pattern and type a value</span>
@@ -302,18 +247,6 @@
       <div class="rx-exp-ttl">How this regex works — part by part</div>
       <div class="rx-parts" id="rxParts"></div>
     </div>
-  </div>
-
-  <div class="rx-divider"></div>
-
-  <div class="rx-cust-lbl">🧪 Custom Pattern Generator</div>
-  <div class="rx-cust-row">
-    <input class="rx-cust-inp" id="rxCustInp"
-           placeholder="e.g. BD NID, IPv4, MAC address, hex color, URL…"/>
-    <button class="rx-gen-btn" id="rxGenBtn">Generate ↗</button>
-  </div>
-  <div class="hidden" id="rxCustOut">
-    <div class="rx-cust-out" id="rxCustBody"></div>
   </div>
 
 </div>
